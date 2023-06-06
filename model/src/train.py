@@ -21,8 +21,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as TF
-import random
-
+import os
 
 
 
@@ -139,8 +138,8 @@ def validate(model, dataloader):
 
             # save 8 images for comparison, using inbuilt grid
             # concat data and reconstruction vertically
-            concat_data_reconstruction = torch.cat([data[:6], reconstruction[:6]])
-            grid = torchvision.utils.make_grid(concat_data_reconstruction.cpu(), nrow=6)
+            concat_data_reconstruction = torch.cat([data[:8], reconstruction[:8]])
+            grid = torchvision.utils.make_grid(concat_data_reconstruction.cpu(), nrow=8)
             save_image(grid, f"../outputs/reconstruction{epoch}.png")
 
             # generate average embedding
@@ -163,9 +162,24 @@ def save_checkpoint(state, filename="vae.pth.tar"):
     print("=> Saving checkpoint")
     torch.save(state, filename)
 
+if(os.path.exists("../models/vae.pth.tar")):
+  model.load_state_dict(torch.load("../models/vae.pth.tar"))
+  print("Loaded model from disk")
+
+  while True:
+    # generate new random image
+    embedding = torch.randn(1, 256).to(device)
+    new_image = model.decode(embedding)[0]
+    
+    plt.imshow(
+        new_image.permute(1, 2, 0).detach().cpu().numpy(),
+    )
+    plt.show()
+
+
+print("Starting training")
 train_loss = []
 val_loss = []
-
 best_loss = 1e9 #  = 10^9
 
 i = 0
@@ -184,3 +198,6 @@ for epoch in tqdm(range(epochs)):
     #       save_checkpoint(model.state_dict(), filename='../outputs/vae.pth.tar')
     #       best_loss = val_epoch_loss
     i += 1
+
+# save model to file
+save_checkpoint(model.state_dict(), filename='../models/vae.pth.tar')
