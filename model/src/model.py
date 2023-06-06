@@ -196,8 +196,8 @@ class VAE(nn.Module):
             nn.ReLU(), # 4x4x128
 
             # # convnets 
-            nn.Conv2d(128, 128, kernel_size=3, stride=1),
-            nn.ReLU(),
+            # nn.Conv2d(128, 128, kernel_size=3, stride=1),
+            # nn.ReLU(),
             
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2),
             nn.ReLU(), 
