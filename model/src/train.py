@@ -39,6 +39,9 @@ parser.add_argument('-b', '--batch-size', default=64, type=int,
 # force_retrain
 parser.add_argument('-f', '--force-retrain', default=False, type=bool,
                     help='force retrain the model')
+# save model
+parser.add_argument('-s', '--save-model', default=False, type=bool,
+                    help='save the model')
 # parse args
 args = vars(parser.parse_args())
 
@@ -174,12 +177,21 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
   print("Loaded model from disk")
 
+  # load 10 train images and encode them
+  data = next(iter(train_loader))
+  reconstruction, mu, logvar = model(data)
+  # print(reconstruction.shape, data.shape)
+  plt.imshow(reconstruction[0].permute(1, 2, 0).detach().cpu().numpy())
+  plt.show()
+
+
   # glob over images in ../in_img
   for file in glob.glob("../in_img/*.png"):
 
     im = Image.open(file)
 
     im = im.convert('RGB')
+    im =  im.resize((20,20), NEAREST)
     im =  im.resize((32,32), NEAREST)
 
     plt.imshow(im)
@@ -192,7 +204,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
     plt.imshow(new_image)
     plt.show()
   
-  os.exit(0)
+  1/0
 
 print("Starting training")
 train_loss = []
@@ -217,4 +229,5 @@ for epoch in tqdm(range(epochs)):
     i += 1
 
 # save model to file
-save_checkpoint(model.state_dict(), filename='../models/vae.pth.tar')
+if(args['save_model']):
+  save_checkpoint(model.state_dict(), filename='../models/vae.pth.tar')
