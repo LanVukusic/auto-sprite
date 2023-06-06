@@ -39,7 +39,7 @@ args = vars(parser.parse_args())
 # leanring parameters
 epochs = args['epochs']
 batch_size = args['batch_size']
-lr = 0.0001
+lr = 0.00007
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transforms
@@ -173,7 +173,7 @@ for epoch in tqdm(range(epochs)):
     # print(f"Epoch {epoch+1} of {epochs}")
     train_epoch_loss = fit(model, train_loader)
     
-    if(i % 100 == 0):
+    if(i % 20 == 0):
       train_loss.append(train_epoch_loss)
       val_epoch_loss = validate(model, train_loader)
       val_loss.append(val_epoch_loss)

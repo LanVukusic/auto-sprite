@@ -149,7 +149,7 @@ image_size = 32 # 32x32
 image_channels = 3 # color channels
 
 # model
-init_channels = 128 # initial number of filters
+init_channels = 256 # initial number of filters
 
 class Flatten(nn.Module):
     def forward(self, input):
@@ -172,6 +172,8 @@ class VAE(nn.Module):
             nn.ReLU(), 
             nn.Conv2d(128, 256, kernel_size=2, stride=1),  # 1x1x256
             nn.ReLU(),
+            nn.Conv2d(256, 256, kernel_size=1, stride=1),  # 1x1x256
+            nn.ReLU(),
             Flatten() # h_dim
         )
         
@@ -189,9 +191,14 @@ class VAE(nn.Module):
             # input: -1 x 256
             UnFlatten(), # -1 x 256 x 1 x 1
             nn.ConvTranspose2d(256, 256, kernel_size=3, stride=2), 
-            nn.ReLU(),
+            nn.ReLU(), # 
             nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2), 
+            nn.ReLU(), # 4x4x128
+
+            # # convnets 
+            nn.Conv2d(128, 128, kernel_size=3, stride=1),
             nn.ReLU(),
+            
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2),
             nn.ReLU(), 
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2), # 32,32,32
