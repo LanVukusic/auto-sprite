@@ -22,6 +22,7 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as TF
 import os
+import cv2
 
 
 
@@ -171,10 +172,9 @@ if(os.path.exists("../models/vae.pth.tar")):
     embedding = torch.randn(1, 256).to(device)
     new_image = model.decode(embedding)[0]
     
-    plt.imshow(
-        new_image.permute(1, 2, 0).detach().cpu().numpy(),
-    )
-    plt.show()
+    cv2.imshow('title', new_image.permute(1, 2, 0).detach().cpu().numpy())
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 print("Starting training")
