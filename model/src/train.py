@@ -170,7 +170,8 @@ def save_checkpoint(state, filename="vae.pth.tar"):
     torch.save(state, filename)
 
 if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
-  model.load_state_dict(torch.load("../models/vae.pth.tar"))
+  # load for CPU usage
+  checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
   print("Loaded model from disk")
 
   while True:
@@ -189,7 +190,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
     plt.show()
 
     im = to_py_tensor(im)
-    im = im.unsqueeze(0).to(device)
+    im = im.unsqueeze(0)
     # print(im.shape)
     # encode image
     embedding, mu, logvar = model.encode(im)
