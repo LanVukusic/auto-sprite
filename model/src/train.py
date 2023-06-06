@@ -17,11 +17,14 @@ import glob
 from PIL import Image
 from PIL.Image import NEAREST
 from PIL import ImageShow
+# import pyscreenshot as ImageGrab
+from PIL import ImageGrab
 import numpy as np
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import torchvision.transforms.functional as TF
 import os
+import cv2 as cv
 
 
 
@@ -167,8 +170,23 @@ if(os.path.exists("../models/vae.pth.tar")):
   print("Loaded model from disk")
 
   while True:
+    # read image from clipboard
+    im = ImageGrab.grabclipboard()
+
+    im = im.convert('RGB')
+    im =  im.resize((32,32), NEAREST)
+    im = to_py_tensor(im)
+    im = im.unsqueeze(0).to(device)
+
+    cv.imshow("image", im)
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+
+    # print(im.shape)
+    # encode image
+    embedding, mu, logvar = model.encode(im)
     # generate new random image
-    embedding = torch.randn(1, 256).to(device)
+    # embedding = torch.randn(1, 256).to(device)
     new_image = model.decode(embedding)[0]
     
     plt.imshow(
