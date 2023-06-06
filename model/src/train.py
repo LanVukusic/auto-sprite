@@ -174,35 +174,48 @@ def save_checkpoint(state, filename="vae.pth.tar"):
 
 if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # load for CPU usage
-  checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
+  checkpoint = torch.load("../models/vae.pth.tar")
   print("Loaded model from disk")
-
+  model.load_state_dict(checkpoint)
+  print("Loaded model to CPU")
+  model.to(device)
+  print("Loaded model to GPU")
   # load 10 train images and encode them
-  data = next(iter(train_loader))
+  data = next(iter(train_loader)).to(device)
+  print("dela",data.shape)
   reconstruction, mu, logvar = model(data)
-  # print(reconstruction.shape, data.shape)
-  plt.imshow(reconstruction[0].permute(1, 2, 0).detach().cpu().numpy())
-  plt.show()
+  # # print(reconstruction.shape, data.shape)
 
+  r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
+  d = data.permute(0,2, 3, 1).detach().cpu().numpy()
 
+  # hstack
+  # r = np.hstack(r)
+  # d = np.hstack(d)
+  # cv.imshow("reconstruction",r )
+  # cv.waitKey(0)
   # glob over images in ../in_img
   for file in glob.glob("../in_img/*.png"):
+    image = cv.imread(file)
+    image = cv.resize(image, (24,24))
+    image = cv.resize(image, (32,32), interpolation=cv.INTER_NEAREST)
+    print("img",image.shape)
+    tensor = TF.to_tensor(image)
+    tensor = tensor.unsqueeze(0)
+    tensor = tensor.to(device)
+    print(tensor.shape)
+    reconstruction, mu, logvar = model(tensor)
+    print(reconstruction.shape)
+    r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
+    r = np.hstack(r)
+    cv.imshow("image",image )
+    cv.imshow("reconstruction",r )
+    cv.waitKey(0)
 
-    im = Image.open(file)
+    
 
-    im = im.convert('RGB')
-    im =  im.resize((20,20), NEAREST)
-    im =  im.resize((32,32), NEAREST)
 
-    plt.imshow(im)
-    plt.show()
 
-    im = to_py_tensor(im)
-    im = im.unsqueeze(0)
-    embedding, mu, logvar = model.encode(im)
-    new_image = model.decode(embedding)[0].permute(1, 2, 0).detach().cpu().numpy()
-    plt.imshow(new_image)
-    plt.show()
   
   1/0
 

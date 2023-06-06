@@ -149,7 +149,7 @@ image_size = 32 # 32x32
 image_channels = 3 # color channels
 
 # model
-init_channels = 256 # initial number of filters
+init_channels = 32 # initial number of filters
 
 class Flatten(nn.Module):
     def forward(self, input):
