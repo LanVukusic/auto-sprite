@@ -130,8 +130,6 @@ def validate(model, dataloader):
     running_loss = 0.0
     with torch.no_grad():
         for i, data in enumerate(dataloader):
-            if(i % 100 != 0):
-              continue
             data = data.to(device)
             # data = data.view(data.size(0), -1)
             reconstruction, mu, logvar = model(data)
@@ -158,14 +156,6 @@ def validate(model, dataloader):
             save_image(grid, f"../outputs/new{epoch}.png")
 
 
-
-
-
-            # # save the last batch input and output of every epoch
-            # if i == int(len(train_data)/dataloader.batch_size) - 1:
-            #     save_image(reconstruction.view(batch_size, IMAGE_CHANNELS, 64, 64)[0].cpu(), f"../outputs/output{epoch}.png")
-            #     save_image(data.view(batch_size, IMAGE_CHANNELS, 64, 64)[0].cpu(), f"../outputs/data{epoch}.png")
-
     val_loss = running_loss/len(dataloader.dataset)
     return val_loss
 
@@ -178,14 +168,19 @@ val_loss = []
 
 best_loss = 1e9 #  = 10^9
 
+i = 0
 for epoch in tqdm(range(epochs)): 
-    print(f"Epoch {epoch+1} of {epochs}")
+    # print(f"Epoch {epoch+1} of {epochs}")
     train_epoch_loss = fit(model, train_loader)
-    val_epoch_loss = validate(model, train_loader)
-    train_loss.append(train_epoch_loss)
-    val_loss.append(val_epoch_loss)
-    print(f"Train Loss: {train_epoch_loss:.4f}")
-    print(f"Val Loss: {val_epoch_loss:.4f}")
-    if val_epoch_loss < best_loss:
-        save_checkpoint(model.state_dict(), filename='../outputs/vae.pth.tar')
-        best_loss = val_epoch_loss
+    
+    if(i % 100 == 0):
+      train_loss.append(train_epoch_loss)
+      val_epoch_loss = validate(model, train_loader)
+      val_loss.append(val_epoch_loss)
+      print(f"Train Loss: {train_epoch_loss:.4f}")
+      print(f"Val Loss: {val_epoch_loss:.4f}")
+    # if(i % 200 == 0):
+    #   if val_epoch_loss < best_loss:
+    #       save_checkpoint(model.state_dict(), filename='../outputs/vae.pth.tar')
+    #       best_loss = val_epoch_loss
+    i += 1

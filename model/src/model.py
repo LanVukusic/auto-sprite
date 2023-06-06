@@ -142,6 +142,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 # image
 image_size = 32 # 32x32 
 image_channels = 3 # color channels
@@ -198,9 +200,9 @@ class VAE(nn.Module):
         )
         
     def reparameterize(self, mu, logvar):
-        std = logvar.mul(0.5).exp_()
+        std = logvar.mul(0.5).exp_().to(device)
         # return torch.normal(mu, std)
-        esp = torch.randn(*mu.size())
+        esp = torch.randn(*mu.size()).to(device)
         z = mu + std * esp
         return z
     
