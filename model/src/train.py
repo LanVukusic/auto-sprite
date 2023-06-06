@@ -174,36 +174,25 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
   print("Loaded model from disk")
 
-  while True:
-    # read image from disk "../in_img/1.png"
-    im = Image.open("../in_img/1.png")
-    
+  # glob over images in ../in_img
+  for file in glob.glob("../in_img/*.png"):
+
+    im = Image.open(file)
 
     im = im.convert('RGB')
     im =  im.resize((32,32), NEAREST)
-
-    # cv.imshow("image", im)
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
 
     plt.imshow(im)
     plt.show()
 
     im = to_py_tensor(im)
     im = im.unsqueeze(0)
-    # print(im.shape)
-    # encode image
     embedding, mu, logvar = model.encode(im)
-    # generate new random image
-    # embedding = torch.randn(1, 256).to(device)
     new_image = model.decode(embedding)[0].permute(1, 2, 0).detach().cpu().numpy()
     plt.imshow(new_image)
     plt.show()
-    
-    # cv.imshow('title', new_image.permute(1, 2, 0).detach().cpu().numpy())
-    # cv.waitKey(0)
-    # cv.destroyAllWindows()
-
+  
+  os.exit(0)
 
 print("Starting training")
 train_loss = []
