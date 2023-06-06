@@ -1,0 +1,10 @@
+good
+
+image_gen/images_in
+image_gen/images_out
+image_gen/*.png
+
+model/outputs
+
+__pycache__
+.editorconfig
