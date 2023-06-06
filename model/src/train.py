@@ -48,7 +48,7 @@ args = vars(parser.parse_args())
 # leanring parameters
 epochs = args['epochs']
 batch_size = args['batch_size']
-lr = 0.00005
+lr = 0.0008
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transforms
@@ -181,38 +181,75 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   model.to(device)
   print("Loaded model to GPU")
   # load 10 train images and encode them
-  data = next(iter(train_loader)).to(device)
-  print("dela",data.shape)
-  reconstruction, mu, logvar = model(data)
-  # # print(reconstruction.shape, data.shape)
+  # data = next(iter(train_loader)).to(device)
+  # print("dela",data.shape)
+  # reconstruction, mu, logvar = model(data)
+  # # # print(reconstruction.shape, data.shape)
 
-  r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
-  d = data.permute(0,2, 3, 1).detach().cpu().numpy()
+  # r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
+  # d = data.permute(0,2, 3, 1).detach().cpu().numpy()
 
-  # hstack
-  # r = np.hstack(r)
-  # d = np.hstack(d)
-  # cv.imshow("reconstruction",r )
+  # # hstack
+  # # r = np.hstack(r)
+  # # d = np.hstack(d)
+  # # cv.imshow("reconstruction",r )
+  # # cv.waitKey(0)
+  # # glob over images in ../in_img
+  # for file in glob.glob("../in_img/*.png"):
+  #   image = cv.imread(file)
+  #   image = cv.resize(image, (24,24))
+  #   image = cv.resize(image, (32,32), interpolation=cv.INTER_NEAREST)
+  #   print("img",image.shape)
+  #   tensor = TF.to_tensor(image)
+  #   tensor = tensor.unsqueeze(0)
+  #   tensor = tensor.to(device)
+  #   print(tensor.shape)
+  #   reconstruction, mu, logvar = model(tensor)
+  #   print(reconstruction.shape)
+  #   r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
+  #   r = np.hstack(r)
+  #   cv.imshow("image",image )
+  #   cv.imshow("reconstruction",r )
+  #   cv.waitKey(0)
+  # rows = []
+  # cols = []
+  # k = 0
+  # DIVS = 20
+  # for i in range(DIVS):
+  #   for j in range(DIVS):
+  #     # linearly interpolate between 2 points 0 and DIVS*DIVS
+  #     t = (i*DIVS) + j
+  #     part = t/(DIVS*DIVS)
+
+  #     # P1 = (-1, -1), P2 = (1,1)
+
+
+  #     print(part)
+  #     latent = (torch.ones((1, 2), dtype=torch.float32).to(device) -0.5) * (part*2)
+  #     # print(latent.shape)
+  #     img = model.decode(latent).squeeze(0)
+  #     # print(img.shape)
+  #     img = img.permute(1,2,0).detach().cpu().numpy()
+  #     # print(img.shape)
+  #     cols.append(img)
+  #     # print(img.shape)
+  #     k += 1
+  #     # cv.imshow("img",img)
+  #     # cv.waitKey(0)
+  #     # cv.destroyAllWindows()  
+  #   im = np.hstack(cols)
+  #   rows.append(im)
+  #   cols = []
+  # img = np.vstack(rows)
+
+  # # img = np.hstack(out)
+  # print(img.shape)
+  # cv.imshow("img",img)
   # cv.waitKey(0)
-  # glob over images in ../in_img
-  for file in glob.glob("../in_img/*.png"):
-    image = cv.imread(file)
-    image = cv.resize(image, (24,24))
-    image = cv.resize(image, (32,32), interpolation=cv.INTER_NEAREST)
-    print("img",image.shape)
-    tensor = TF.to_tensor(image)
-    tensor = tensor.unsqueeze(0)
-    tensor = tensor.to(device)
-    print(tensor.shape)
-    reconstruction, mu, logvar = model(tensor)
-    print(reconstruction.shape)
-    r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
-    r = np.hstack(r)
-    cv.imshow("image",image )
-    cv.imshow("reconstruction",r )
-    cv.waitKey(0)
+  # cv.destroyAllWindows()    
 
-    
+  # # save
+  # cv.imwrite("../docs/latend2d.png", img*255)
 
 
 
