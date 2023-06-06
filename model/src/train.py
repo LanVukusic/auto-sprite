@@ -38,7 +38,7 @@ args = vars(parser.parse_args())
 # leanring parameters
 epochs = args['epochs']
 batch_size = args['batch_size']
-lr = 0.00007
+lr = 0.00005
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transforms
