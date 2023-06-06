@@ -36,6 +36,10 @@ parser.add_argument('-e', '--epochs', default=10, type=int,
 # batch size
 parser.add_argument('-b', '--batch-size', default=64, type=int,
                     help='batch size for training')
+# force_retrain
+parser.add_argument('-f', '--force-retrain', default=False, type=bool,
+                    help='force retrain the model')
+# parse args
 args = vars(parser.parse_args())
 
 # leanring parameters
@@ -165,7 +169,7 @@ def save_checkpoint(state, filename="vae.pth.tar"):
     print("=> Saving checkpoint")
     torch.save(state, filename)
 
-if(os.path.exists("../models/vae.pth.tar")):
+if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   model.load_state_dict(torch.load("../models/vae.pth.tar"))
   print("Loaded model from disk")
 
