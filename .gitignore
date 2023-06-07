@@ -8,3 +8,5 @@ model/outputs
 
 __pycache__
 .editorconfig
+
+icons/*.png
