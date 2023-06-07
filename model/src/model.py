@@ -149,7 +149,6 @@ image_size = 32 # 32x32
 image_channels = 3 # color channels
 
 # model
-init_channels = 256 # initial number of filters
 
 class Flatten(nn.Module):
     def forward(self, input):
@@ -160,7 +159,7 @@ class UnFlatten(nn.Module):
         return input.view(input.size(0), 256, 1, 1)
 
 class VAE(nn.Module):
-    def __init__(self, image_channels=image_channels, z_dim=init_channels):
+    def __init__(self, image_channels=image_channels, z_dim=64):
         super(VAE, self).__init__()
         self.encoder = nn.Sequential(
             # input: 32x32x3

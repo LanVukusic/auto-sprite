@@ -49,6 +49,7 @@ args = vars(parser.parse_args())
 epochs = args['epochs']
 batch_size = args['batch_size']
 lr = 0.00005
+lr = 0.0001
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transforms
@@ -59,7 +60,7 @@ to_py_tensor = transforms.ToTensor()
 
 IMAGE_CHANNELS = 3
 # reshape the data to 64x64x4 rgb alpha channel
-def get_images (data_path = "../../swords"):
+def get_images (data_path = "../../coins"):
     # glob 
     images = []
     for file in glob.glob(data_path + "/*.png"):
@@ -172,6 +173,7 @@ def save_checkpoint(state, filename="vae.pth.tar"):
     print("=> Saving checkpoint")
     torch.save(state, filename)
 
+# load model if exists
 if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # load for CPU usage
   checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
@@ -206,6 +208,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   
   1/0
 
+# train new
 print("Starting training")
 train_loss = []
 val_loss = []
@@ -215,17 +218,12 @@ i = 0
 for epoch in tqdm(range(epochs)): 
     # print(f"Epoch {epoch+1} of {epochs}")
     train_epoch_loss = fit(model, train_loader)
-    
-    if(i % 20 == 0):
+    if(i % 5 == 0):
       train_loss.append(train_epoch_loss)
       val_epoch_loss = validate(model, train_loader)
       val_loss.append(val_epoch_loss)
       print(f"Train Loss: {train_epoch_loss:.4f}")
       print(f"Val Loss: {val_epoch_loss:.4f}")
-    # if(i % 200 == 0):
-    #   if val_epoch_loss < best_loss:
-    #       save_checkpoint(model.state_dict(), filename='../outputs/vae.pth.tar')
-    #       best_loss = val_epoch_loss
     i += 1
 
 # save model to file
