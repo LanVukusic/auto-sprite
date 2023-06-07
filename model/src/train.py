@@ -181,20 +181,20 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   model.to(device)
   print("Loaded model to GPU")
   # load 10 train images and encode them
-  # data = next(iter(train_loader)).to(device)
-  # print("dela",data.shape)
-  # reconstruction, mu, logvar = model(data)
-  # # # print(reconstruction.shape, data.shape)
+  data = next(iter(train_loader)).to(device)
+  print("dela",data.shape)
+  reconstruction, mu, logvar = model(data)
+  # # print(reconstruction.shape, data.shape)
 
-  # r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
-  # d = data.permute(0,2, 3, 1).detach().cpu().numpy()
+  r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
+  d = data.permute(0,2, 3, 1).detach().cpu().numpy()
 
-  # # hstack
-  # # r = np.hstack(r)
-  # # d = np.hstack(d)
-  # # cv.imshow("reconstruction",r )
-  # # cv.waitKey(0)
-  # # glob over images in ../in_img
+  # hstack
+  # r = np.hstack(r)
+  # d = np.hstack(d)
+  # cv.imshow("reconstruction",r )
+  # cv.waitKey(0)
+  # glob over images in ../in_img
   # for file in glob.glob("../in_img/*.png"):
   #   image = cv.imread(file)
   #   image = cv.resize(image, (24,24))
@@ -211,6 +211,18 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   #   cv.imshow("image",image )
   #   cv.imshow("reconstruction",r )
   #   cv.waitKey(0)
+  #   cv.destroyAllWindows()
+  for i in range(50):
+    random_tensor = torch.randn(1, 128).to(device)
+
+    tensor = random_tensor.to(device)
+    print(tensor.shape)
+    reconstruction = model.decode(tensor)
+    r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
+    r = np.hstack(r)
+    cv.imshow("reconstruction",r )
+    cv.waitKey(0)
+    cv.destroyAllWindows()
   # rows = []
   # cols = []
   # k = 0
