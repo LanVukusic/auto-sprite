@@ -167,10 +167,15 @@ class VAE(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 64, kernel_size=4, stride=2), # 6x6x64
             nn.ReLU(),
-            nn.Conv2d(64, 128, kernel_size=4, stride=2), # 2x2x128
+            nn.Dropout(0.2),
+            nn.Conv2d(64, 64, kernel_size=4, stride=2), # 2x2x128
             nn.ReLU(), 
-            nn.Conv2d(128, 256, kernel_size=2, stride=1),  # 1x1x256
+            nn.Dropout(0.2),
+            nn.Conv2d(64, 256, kernel_size=2, stride=1),  # 1x1x256
             nn.ReLU(),
+            # dropout
+            nn.Dropout(0.2),
+
             nn.Conv2d(256, 256, kernel_size=1, stride=1),  # 1x1x256
             nn.ReLU(),
             Flatten() # h_dim
@@ -189,17 +194,22 @@ class VAE(nn.Module):
         self.decoder = nn.Sequential(
             # input: -1 x 256
             UnFlatten(), # -1 x 256 x 1 x 1
-            nn.ConvTranspose2d(256, 256, kernel_size=3, stride=2), 
-            nn.ReLU(), # 
             nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2), 
-            nn.ReLU(), # 4x4x128
+            nn.ReLU(), # 
+            nn.Dropout(0.2),
 
+            nn.ConvTranspose2d(128, 128, kernel_size=3, stride=2), 
+            nn.ReLU(), # 4x4x128
+            # dropout
+
+            nn.Dropout(0.2),
             # # convnets 
             # nn.Conv2d(128, 128, kernel_size=3, stride=1),
             # nn.ReLU(),
             
             nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2),
             nn.ReLU(), 
+            nn.Dropout(0.2),
             nn.ConvTranspose2d(64, 3, kernel_size=4, stride=2), # 32,32,32
             nn.Sigmoid()
 

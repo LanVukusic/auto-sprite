@@ -48,8 +48,7 @@ args = vars(parser.parse_args())
 # leanring parameters
 epochs = args['epochs']
 batch_size = args['batch_size']
-lr = 0.00005
-lr = 0.0001
+lr = 0.0008
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # transforms
@@ -176,35 +175,97 @@ def save_checkpoint(state, filename="vae.pth.tar"):
 # load model if exists
 if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # load for CPU usage
-  checkpoint = torch.load("../models/vae.pth.tar", map_location=torch.device('cpu'))
+  checkpoint = torch.load("../models/vae.pth.tar")
   print("Loaded model from disk")
-
+  model.load_state_dict(checkpoint)
+  print("Loaded model to CPU")
+  model.to(device)
+  print("Loaded model to GPU")
   # load 10 train images and encode them
-  data = next(iter(train_loader))
+  data = next(iter(train_loader)).to(device)
+  print("dela",data.shape)
   reconstruction, mu, logvar = model(data)
-  # print(reconstruction.shape, data.shape)
-  plt.imshow(reconstruction[0].permute(1, 2, 0).detach().cpu().numpy())
-  plt.show()
+  # # print(reconstruction.shape, data.shape)
 
+  r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
+  d = data.permute(0,2, 3, 1).detach().cpu().numpy()
 
+  # hstack
+  # r = np.hstack(r)
+  # d = np.hstack(d)
+  # cv.imshow("reconstruction",r )
+  # cv.waitKey(0)
   # glob over images in ../in_img
-  for file in glob.glob("../in_img/*.png"):
+  # for file in glob.glob("../in_img/*.png"):
+  #   image = cv.imread(file)
+  #   image = cv.resize(image, (24,24))
+  #   image = cv.resize(image, (32,32), interpolation=cv.INTER_NEAREST)
+  #   print("img",image.shape)
+  #   tensor = TF.to_tensor(image)
+  #   tensor = tensor.unsqueeze(0)
+  #   tensor = tensor.to(device)
+  #   print(tensor.shape)
+  #   reconstruction, mu, logvar = model(tensor)
+  #   print(reconstruction.shape)
+  #   r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
+  #   r = np.hstack(r)
+  #   cv.imshow("image",image )
+  #   cv.imshow("reconstruction",r )
+  #   cv.waitKey(0)
+  #   cv.destroyAllWindows()
+  for i in range(50):
+    random_tensor = torch.randn(1, 128).to(device)
 
-    im = Image.open(file)
+    tensor = random_tensor.to(device)
+    print(tensor.shape)
+    reconstruction = model.decode(tensor)
+    r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
+    r = np.hstack(r)
+    cv.imshow("reconstruction",r )
+    cv.waitKey(0)
+    cv.destroyAllWindows()
+  # rows = []
+  # cols = []
+  # k = 0
+  # DIVS = 20
+  # for i in range(DIVS):
+  #   for j in range(DIVS):
+  #     # linearly interpolate between 2 points 0 and DIVS*DIVS
+  #     t = (i*DIVS) + j
+  #     part = t/(DIVS*DIVS)
 
-    im = im.convert('RGB')
-    im =  im.resize((20,20), NEAREST)
-    im =  im.resize((32,32), NEAREST)
+  #     # P1 = (-1, -1), P2 = (1,1)
 
-    plt.imshow(im)
-    plt.show()
 
-    im = to_py_tensor(im)
-    im = im.unsqueeze(0)
-    embedding, mu, logvar = model.encode(im)
-    new_image = model.decode(embedding)[0].permute(1, 2, 0).detach().cpu().numpy()
-    plt.imshow(new_image)
-    plt.show()
+  #     print(part)
+  #     latent = (torch.ones((1, 2), dtype=torch.float32).to(device) -0.5) * (part*2)
+  #     # print(latent.shape)
+  #     img = model.decode(latent).squeeze(0)
+  #     # print(img.shape)
+  #     img = img.permute(1,2,0).detach().cpu().numpy()
+  #     # print(img.shape)
+  #     cols.append(img)
+  #     # print(img.shape)
+  #     k += 1
+  #     # cv.imshow("img",img)
+  #     # cv.waitKey(0)
+  #     # cv.destroyAllWindows()  
+  #   im = np.hstack(cols)
+  #   rows.append(im)
+  #   cols = []
+  # img = np.vstack(rows)
+
+  # # img = np.hstack(out)
+  # print(img.shape)
+  # cv.imshow("img",img)
+  # cv.waitKey(0)
+  # cv.destroyAllWindows()    
+
+  # # save
+  # cv.imwrite("../docs/latend2d.png", img*255)
+
+
+
   
   1/0
 
