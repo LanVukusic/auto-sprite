@@ -58,8 +58,10 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 to_py_tensor = transforms.ToTensor()
 
 IMAGE_CHANNELS = 3
+data_path = "../../swords"
+
 # reshape the data to 64x64x4 rgb alpha channel
-def get_images (data_path = "../../coins"):
+def get_images ():
     # glob 
     images = []
     for file in glob.glob(data_path + "/*.png"):
@@ -188,83 +190,46 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
   d = data.permute(0,2, 3, 1).detach().cpu().numpy()
 
-  # hstack
-  # r = np.hstack(r)
-  # d = np.hstack(d)
-  # cv.imshow("reconstruction",r )
-  # cv.waitKey(0)
-  # glob over images in ../in_img
-  # for file in glob.glob("../in_img/*.png"):
-  #   image = cv.imread(file)
-  #   image = cv.resize(image, (24,24))
-  #   image = cv.resize(image, (32,32), interpolation=cv.INTER_NEAREST)
-  #   print("img",image.shape)
-  #   tensor = TF.to_tensor(image)
-  #   tensor = tensor.unsqueeze(0)
-  #   tensor = tensor.to(device)
-  #   print(tensor.shape)
-  #   reconstruction, mu, logvar = model(tensor)
-  #   print(reconstruction.shape)
-  #   r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
-  #   r = np.hstack(r)
-  #   cv.imshow("image",image )
-  #   cv.imshow("reconstruction",r )
-  #   cv.waitKey(0)
-  #   cv.destroyAllWindows()
-  for i in range(50):
-    random_tensor = torch.randn(1, 128).to(device)
-
-    tensor = random_tensor.to(device)
-    print(tensor.shape)
-    reconstruction = model.decode(tensor)
-    r = reconstruction.permute(0, 2, 3, 1).detach().cpu().numpy()
-    r = np.hstack(r)
-    cv.imshow("reconstruction",r )
-    cv.waitKey(0)
-    cv.destroyAllWindows()
-  # rows = []
-  # cols = []
-  # k = 0
-  # DIVS = 20
-  # for i in range(DIVS):
-  #   for j in range(DIVS):
-  #     # linearly interpolate between 2 points 0 and DIVS*DIVS
-  #     t = (i*DIVS) + j
-  #     part = t/(DIVS*DIVS)
-
-  #     # P1 = (-1, -1), P2 = (1,1)
-
-
-  #     print(part)
-  #     latent = (torch.ones((1, 2), dtype=torch.float32).to(device) -0.5) * (part*2)
-  #     # print(latent.shape)
-  #     img = model.decode(latent).squeeze(0)
-  #     # print(img.shape)
-  #     img = img.permute(1,2,0).detach().cpu().numpy()
-  #     # print(img.shape)
-  #     cols.append(img)
-  #     # print(img.shape)
-  #     k += 1
-  #     # cv.imshow("img",img)
-  #     # cv.waitKey(0)
-  #     # cv.destroyAllWindows()  
-  #   im = np.hstack(cols)
-  #   rows.append(im)
-  #   cols = []
-  # img = np.vstack(rows)
-
-  # # img = np.hstack(out)
-  # print(img.shape)
-  # cv.imshow("img",img)
-  # cv.waitKey(0)
-  # cv.destroyAllWindows()    
-
-  # # save
-  # cv.imwrite("../docs/latend2d.png", img*255)
-
-
-
+  # glob over trainig images
+  images = []
+  img_names = []
+  embedding = []
+  for file in glob.glob(data_path + "/*.png"):
+      img_names.append(file)
+      # to grayscale single channel
+      image = Image.open(file).convert('RGB')
+      # resize
+      image =  image.resize((32,32), NEAREST)
+      image = to_py_tensor(image)
+      images.append(image)
   
+  # convert to tensor with a batch dimension
+  images = torch.stack(images)
+  # encode
+  embedding, mu, logvar = model.encode(images.to(device))
+  # print(embedding.shape)
+  # print(mu.shape)
+
+  # save embedding to file
+  embedding = embedding.detach().cpu().numpy()
+
+  # tsne to 3 dimensions
+  from sklearn.manifold import TSNE
+
+  tsne = TSNE(n_components=3, verbose=1, perplexity=40, n_iter=300)
+  tsne_results = tsne.fit_transform(embedding)
+
+  embedding = tsne_results
+
+  output = []
+  jsonOut = {}
+  for i in range(len(embedding)):
+    jsonOut["embedding"] = list(embedding[i].astype(float))
+    jsonOut["name"] = img_names[i].split("/")[-1]
+    output.append(jsonOut.copy())
+
+  import json
+  json.dump(output, open("../../out/embedding.json", 'w'))
   1/0
 
 # train new
