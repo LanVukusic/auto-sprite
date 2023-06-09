@@ -3,8 +3,8 @@
 An experiment in a chain of project to make ai generated game assets.  
 This project was trained on 700 scraped and custom curated images
 
-![embeddings]("docs/embeddings.png")  
-<!-- [Check it out here]() -->
+![embeddings](docs/web.png)  
+[Check it out here]()
 
 ## Findings
 
@@ -29,8 +29,13 @@ We have tried a single value embedding and a 2 value embedding, giving us a line
 
 My guess is, that the noise at higher numbers is due to activations having most precision near midpoint. This does not explain why the lower end of the spectrum is not noisy, but it is the best explanation I have.
 
+## future plans
+
+I'll try to use a simmilar approach on other images. Currently im planning on using it for crypto currency icons. i'd like to be able to cluster simmilar looking ones together and generate new ones
+
+I am planning on retrying this same idea with a GAN, but that is a distant future plan.
 
 ## Thanks
 
-- [Zan Oberstar](https://github.com/gendestry) for the compute power and debugging help.
+- [Zan Oberstar](https://github.com/gendestry) for the compute power, 🍺 and debugging help.
 - [Enei Sluga](https://github.com/smufa) for help with the dataset, ideas and support. *#embedeverything*
