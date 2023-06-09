@@ -39,3 +39,5 @@ I am planning on retrying this same idea with a GAN, but that is a distant futur
 
 - [Zan Oberstar](https://github.com/gendestry) for the compute power, 🍺 and debugging help.
 - [Enei Sluga](https://github.com/smufa) for help with the dataset, ideas and support. *#embedeverything*
+
+leave a star if you like it!  
