@@ -15,7 +15,7 @@ class Flatten(nn.Module):
     
 class UnFlatten(nn.Module):
     def forward(self, input):
-        return input.view(input.size(0), 256, 1, 1)
+        return input.view(input.size(0), 3, 1, 1)
 
 class VAE(nn.Module):
     def __init__(self, image_channels=image_channels, z_dim=128):

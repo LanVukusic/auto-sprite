@@ -216,7 +216,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # tsne to 3 dimensions
   from sklearn.manifold import TSNE
 
-  tsne = TSNE(n_components=3, verbose=1, perplexity=40, n_iter=300)
+  tsne = TSNE(n_components=3, verbose=1, perplexity=30, n_iter=300)
   tsne_results = tsne.fit_transform(embedding)
 
   embedding = tsne_results
