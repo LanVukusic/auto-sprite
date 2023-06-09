@@ -216,10 +216,16 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # tsne to 3 dimensions
   from sklearn.manifold import TSNE
 
-  tsne = TSNE(n_components=3, verbose=1, perplexity=30, n_iter=300)
-  tsne_results = tsne.fit_transform(embedding)
+  tsne = TSNE(n_components=3, verbose=1, perplexity=20, n_iter=800)
+  result = tsne.fit_transform(embedding)
 
-  embedding = tsne_results
+  # mds
+  # from sklearn.manifold import MDS
+  # mds = MDS(n_components=3, verbose=1, max_iter=300)
+  # result = mds.fit_transform(embedding)
+  
+
+  embedding = result
 
   output = []
   jsonOut = {}
@@ -230,7 +236,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
 
   import json
   json.dump(output, open("../../out/embedding.json", 'w'))
-  1/0
+  os._exit(0)
 
 # train new
 print("Starting training")
