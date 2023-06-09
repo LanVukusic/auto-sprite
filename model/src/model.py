@@ -18,7 +18,7 @@ class UnFlatten(nn.Module):
         return input.view(input.size(0), 256, 1, 1)
 
 class VAE(nn.Module):
-    def __init__(self, image_channels=image_channels, z_dim=256):
+    def __init__(self, image_channels=image_channels, z_dim=128):
         super(VAE, self).__init__()
         self.encoder = nn.Sequential(
             # input: 32x32x3

@@ -175,17 +175,15 @@ def save_checkpoint(state, filename="vae.pth.tar"):
 # load model if exists
 if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
   # load for CPU usage
-  checkpoint = torch.load("../models/vae.pth.tar")
+  checkpoint = torch.load("../models/vae.pth.tar", map_location=device)
   print("Loaded model from disk")
   model.load_state_dict(checkpoint)
-  print("Loaded model to CPU")
+  print("Loaded model to DEVICE")
   model.to(device)
-  print("Loaded model to GPU")
   # load 10 train images and encode them
   data = next(iter(train_loader)).to(device)
   print("dela",data.shape)
   reconstruction, mu, logvar = model(data)
-  # # print(reconstruction.shape, data.shape)
 
   r = reconstruction.permute(0,2, 3, 1).detach().cpu().numpy()
   d = data.permute(0,2, 3, 1).detach().cpu().numpy()
