@@ -4,7 +4,7 @@ An experiment in a chain of project to make ai generated game assets.
 This project was trained on 700 scraped and custom curated images
 
 ![embeddings](docs/web.png)  
-[Check it out here]()
+[Check it out here](https://autosprite.lanvukusic.com/)
 
 ## Findings
 
