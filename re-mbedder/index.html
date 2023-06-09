@@ -3,15 +3,37 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="icon" type="image/svg+xml" href="/icon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vite + React + TS</title>
+  <title>Autosprite emedding vissualizer</title>
 </head>
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+
+  <div class="settings">
+    <div class="inner">
+
+      <h1>Autosprite</h1>
+      <span>
+        Convolutional variational autoencoder for embedding and generating 2D pixle art weapons.
+      </span>
+
+      <h2>Controlls</h2>
+      <ul>
+        <!-- default three.js orbit controlls -->
+        <li>Left mouse button: Rotate</li>
+        <li>Right mouse button: Pan</li>
+        <li>Shift + Left mouse button: Pan</li>
+        <li>Scroll wheel: Zoom</li>
+      </ul>
+    </div>
+
+  </div>
 </body>
+
+
 
 </html>
 
@@ -21,5 +43,20 @@
     margin: 0;
     padding: 0;
     font-family: sans-serif;
+  }
+
+  .settings {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    margin: "1rem";
+  }
+
+  .settings .inner {
+    background: rgba(255, 255, 255, 0.591);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    max-width: 300px;
   }
 </style>

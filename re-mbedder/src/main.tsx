@@ -16,14 +16,18 @@ scene.background = new THREE.Color("white");
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
-  0.1,
-  1000
+  0.01,
+  3000
 );
-camera.position.z = 5;
+camera.position.z = -3;
+camera.position.x = 20;
 
 // Create a renderer
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({
+  antialias: false,
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 // renderer.logarithmicDepthBuffer = true;
 document.body.appendChild(renderer.domElement);
 
@@ -50,7 +54,8 @@ data.forEach((d) => {
     d.embedding[1] / DIVISION,
     d.embedding[2] / DIVISION
   );
-  sprite.scale.set(2, 2, 2);
+  const s = 3;
+  sprite.scale.set(s, s, s);
   scene.add(sprite);
 });
 
