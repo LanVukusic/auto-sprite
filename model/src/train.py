@@ -241,7 +241,7 @@ if(os.path.exists("../models/vae.pth.tar") and not args['force_retrain']):
 # train new
 print("Starting training")
 train_loss = []
-val_loss = []
+val_loss = [] 
 best_loss = 1e9 #  = 10^9
 
 i = 0
